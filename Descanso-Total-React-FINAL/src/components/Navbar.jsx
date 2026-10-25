@@ -3,39 +3,29 @@ import React, { useState } from "react";
 
 export default function Navbar() {
   const [menuAbierto, setMenuAbierto] = useState(false);
-  const [gestionAbierta, setGestionAbierta] = useState(false);
+  const [reservaAbierta, setReservaAbierta] = useState(false);
 
   const enlaces = [
     ["/", "Inicio"],
     ["/rf01-disponibilidad", "Habitaciones"],
     ["/rf02-registrar-reserva", "Reservar"],
-    ["/rf03-estado-de-reserva", "Mi reserva"],
-    ["/rf05-cancelar-reserva", "Cancelar"],
-    ["/rf04-servicios-adicionales", "Servicios"],
     ["/nosotros", "Nosotros"],
     ["/contacto", "Contacto"]
   ];
 
-  const gestion = [
-    ["/rf06-gestionar-reservas", "Reservas"],
-    ["/rf07-check-in", "Check-in"],
-    ["/rf08-gestionar-limpieza", "Limpieza"],
-    ["/rf09-check-out-y-cobro", "Check-out"],
-    ["/rf10-reportes", "Reportes"]
-  ];
+  function cerrarMenus() {
+    setReservaAbierta(false);
+    setMenuAbierto(false);
+  }
 
   return (
     <nav className="navbar navbar-expand-xl bg-light border-bottom">
       <div className="container-fluid px-3">
-        <a className="navbar-brand" href="/">
+        <a className="navbar-brand" href="/" onClick={cerrarMenus}>
           <img
             src="/images/logo.png"
             alt="Hotel Descanso Total"
-            style={{
-              width: "160px",
-              maxWidth: "100%",
-              height: "auto"
-            }}
+            style={{ width: "160px", height: "auto" }}
           />
         </a>
 
@@ -56,9 +46,13 @@ export default function Navbar() {
           }
         >
           <ul className="navbar-nav ms-auto align-items-xl-center">
-            {enlaces.map(([url, nombre]) => (
+            {enlaces.slice(0, 3).map(([url, nombre]) => (
               <li className="nav-item" key={url}>
-                <a className="nav-link px-xl-2" href={url}>
+                <a
+                  className="nav-link px-xl-2"
+                  href={url}
+                  onClick={cerrarMenus}
+                >
                   {nombre}
                 </a>
               </li>
@@ -67,32 +61,79 @@ export default function Navbar() {
             <li className="nav-item dropdown">
               <button
                 type="button"
-                className="nav-link dropdown-toggle"
-                aria-expanded={gestionAbierta}
-                onClick={() => setGestionAbierta(!gestionAbierta)}
+                className="nav-link dropdown-toggle px-xl-2"
+                aria-expanded={reservaAbierta}
+                aria-controls="menuReserva"
+                onClick={() => setReservaAbierta(!reservaAbierta)}
                 style={{
                   background: "transparent",
                   border: "none",
                   cursor: "pointer"
                 }}
               >
-                Gestión Hotel
+                Mi reserva
               </button>
 
               <ul
+                id="menuReserva"
                 className={
-                  "dropdown-menu dropdown-menu-end" +
-                  (gestionAbierta ? " show" : "")
+                  "dropdown-menu" +
+                  (reservaAbierta ? " show" : "")
                 }
               >
-                {gestion.map(([url, nombre]) => (
-                  <li key={url}>
-                    <a className="dropdown-item" href={url}>
-                      {nombre}
-                    </a>
-                  </li>
-                ))}
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="/rf03-estado-de-reserva"
+                    onClick={cerrarMenus}
+                  >
+                    Consultar estado
+                  </a>
+                </li>
+
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="/rf04-servicios-adicionales"
+                    onClick={cerrarMenus}
+                  >
+                    Servicios adicionales
+                  </a>
+                </li>
+
+                <li>
+                  <a
+                    className="dropdown-item"
+                    href="/rf05-cancelar-reserva"
+                    onClick={cerrarMenus}
+                  >
+                    Cancelar reserva
+                  </a>
+                </li>
               </ul>
+            </li>
+
+            {enlaces.slice(3).map(([url, nombre]) => (
+              <li className="nav-item" key={url}>
+                <a
+                  className="nav-link px-xl-2"
+                  href={url}
+                  onClick={cerrarMenus}
+                >
+                  {nombre}
+                </a>
+              </li>
+            ))}
+
+            <li className="nav-item">
+              <a
+                className="nav-link px-xl-2"
+                href="/rf06-gestionar-reservas"
+                onClick={cerrarMenus}
+              >
+                <i className="bi bi-lock-fill me-1"></i>
+                Portal administrador
+              </a>
             </li>
           </ul>
         </div>

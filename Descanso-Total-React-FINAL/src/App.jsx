@@ -1,5 +1,8 @@
-import React,{useEffect,useState} from 'react';
+
+import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
+import NavbarAdmin from "./components/NavbarAdmin";
+
 import Page0 from "./pages/Page0";
 import Page1 from "./pages/Page1";
 import Page2 from "./pages/Page2";
@@ -14,7 +17,7 @@ import Page10 from "./pages/Page10";
 import Page11 from "./pages/Page11";
 import Page12 from "./pages/Page12";
 
-const routes={
+const routes = {
   "/contacto": Page0,
   "/": Page1,
   "/nosotros": Page2,
@@ -27,29 +30,74 @@ const routes={
   "/rf07-check-in": Page9,
   "/rf08-gestionar-limpieza": Page10,
   "/rf09-check-out-y-cobro": Page11,
-  "/rf10-reportes": Page12,
+  "/rf10-reportes": Page12
 };
-export default function App(){
- const [path,setPath]=useState(window.location.pathname);
- useEffect(()=>{
-  function pop(){setPath(window.location.pathname)}
-  window.addEventListener('popstate',pop);
-  function navigate(e){
-   const link=e.target.closest('a[href]');
-   if(!link || e.defaultPrevented || e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || link.target==='_blank')return;
-   const url=new URL(link.href,window.location.href);
-   if(url.origin!==window.location.origin || !Object.prototype.hasOwnProperty.call(routes,url.pathname))return;
-   e.preventDefault();
-   if(url.pathname!==window.location.pathname){window.history.pushState({},'',url.pathname);setPath(url.pathname);window.scrollTo(0,0)}
-  }
-  document.addEventListener('click',navigate);
-  return()=>{window.removeEventListener('popstate',pop);document.removeEventListener('click',navigate)};
- },[]);
- const Page=routes[path] || routes['/'];
- return (
-  <>
-    <Navbar />
-    <Page key={path} />
-  </>
-);
+
+const rutasAdmin = [
+  "/rf06-gestionar-reservas",
+  "/rf07-check-in",
+  "/rf08-gestionar-limpieza",
+  "/rf09-check-out-y-cobro",
+  "/rf10-reportes"
+];
+
+export default function App() {
+  const [path, setPath] = useState(window.location.pathname);
+
+  useEffect(() => {
+    function pop() {
+      setPath(window.location.pathname);
+    }
+
+    function navigate(e) {
+      const link = e.target.closest("a[href]");
+
+      if (
+        !link ||
+        e.defaultPrevented ||
+        e.ctrlKey ||
+        e.metaKey ||
+        e.shiftKey ||
+        e.altKey ||
+        link.target === "_blank"
+      ) {
+        return;
+      }
+
+      const url = new URL(link.href, window.location.href);
+
+      if (
+        url.origin !== window.location.origin ||
+        !Object.prototype.hasOwnProperty.call(routes, url.pathname)
+      ) {
+        return;
+      }
+
+      e.preventDefault();
+
+      if (url.pathname !== window.location.pathname) {
+        window.history.pushState({}, "", url.pathname);
+        setPath(url.pathname);
+        window.scrollTo(0, 0);
+      }
+    }
+
+    window.addEventListener("popstate", pop);
+    document.addEventListener("click", navigate);
+
+    return () => {
+      window.removeEventListener("popstate", pop);
+      document.removeEventListener("click", navigate);
+    };
+  }, []);
+
+  const Page = routes[path] || routes["/"];
+  const esAdmin = rutasAdmin.includes(path);
+
+  return (
+    <>
+      {esAdmin ? <NavbarAdmin /> : <Navbar />}
+      <Page key={path} />
+    </>
+  );
 }
