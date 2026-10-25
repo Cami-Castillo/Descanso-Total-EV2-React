@@ -1,0 +1,47 @@
+.logo {
+    display: block;
+    width: 230px;
+    max-width: 100%;
+    height: auto;
+}
+
+:root {
+    --dt-navy: #0b2d48;
+    --dt-gold: #bd902f;
+}
+
+.navbar-brand {
+    color: var(--dt-navy);
+    font-weight: 700;
+}
+
+.nav-link {
+    color: var(--dt-navy);
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--dt-gold);
+}
+h1 {
+    text-align: center;
+    color: var(--dt-navy);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+main > p {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+    color: var(--dt-navy);
+    font-weight: 600;
+}

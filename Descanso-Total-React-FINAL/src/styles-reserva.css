@@ -1,0 +1,20 @@
+/* Formulario de reservas: estilos Bootstrap reutilizados */
+
+/* Corregir tamaño del logo */
+.navbar-brand img {
+  width: 160px !important;
+  max-width: 100% !important;
+  height: auto !important;
+  object-fit: contain;
+}
+
+/* Evitar imágenes gigantes */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Evitar desplazamiento horizontal */
+body {
+  overflow-x: hidden;
+}
