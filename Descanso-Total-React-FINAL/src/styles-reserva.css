@@ -1,20 +1,7 @@
-/* Formulario de reservas: estilos Bootstrap reutilizados */
-
-/* Corregir tamaño del logo */
-.navbar-brand img {
-  width: 160px !important;
-  max-width: 100% !important;
-  height: auto !important;
-  object-fit: contain;
-}
-
-/* Evitar imágenes gigantes */
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Evitar desplazamiento horizontal */
-body {
-  overflow-x: hidden;
-}
+/* Corrección global del tamaño del logo para todas las rutas */
+.navbar-brand img,.navbar-brand .logo { width: 160px !important; max-width: 100% !important; height: auto !important; object-fit: contain; }
+img { max-width: 100%; height: auto; }
+body { overflow-x: hidden; }
+.navbar .container-fluid { flex-wrap: wrap; gap: .5rem; }
+.navbar-nav { flex-wrap: wrap; gap: .4rem; }
+.navbar-nav .nav-link { padding: .5rem; }

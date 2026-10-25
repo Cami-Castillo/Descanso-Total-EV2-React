@@ -1,0 +1,2 @@
+const path=require('path');const fs=require('fs');const esbuild=require('esbuild');
+module.exports=function(config){const destino=path.join(__dirname,'.karma-bundle.js');esbuild.buildSync({entryPoints:['tests/reservas.spec.js'],bundle:true,platform:'browser',format:'iife',outfile:destino});config.set({frameworks:['jasmine'],files:[destino],browsers:['ChromeHeadless'],singleRun:true,reporters:['progress'],client:{captureConsole:true},customLaunchers:{ChromeHeadlessNoSandbox:{base:'ChromeHeadless',flags:['--no-sandbox']}},browserNoActivityTimeout:60000});};

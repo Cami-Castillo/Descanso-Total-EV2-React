@@ -1,5 +1,5 @@
 import React, {useMemo,useState} from 'react';
-import {HABITACIONES,obtenerReservas,disponible,codigoNuevo} from '../data/reservas';
+import {HABITACIONES,obtenerReservas,disponible,crearReserva} from '../data/reservas';
 import '../styles-reserva.css';
 
 const moneda = numero => '$' + numero.toLocaleString('es-CL');
@@ -27,7 +27,7 @@ export default function Page4(){
  if(Number(datos.huespedes)>hab.capacidad||!disponible(hab,datos.entrada,datos.salida)){setError('La habitación no está disponible para esas fechas o cantidad de huéspedes.');return}
  if(!datos.condiciones){setError('Debes aceptar los términos y condiciones.');return}
  const nueva={codigo:codigoNuevo(),nombre:datos.nombre.trim(),apellido:datos.apellido.trim(),email:datos.email.trim(),telefono:datos.telefono.trim(),rut:datos.rut.trim(),entrada:datos.entrada,salida:datos.salida,huespedes:Number(datos.huespedes),habitacion:hab.nombre,precio:hab.precio,noches,total:noches*hab.precio,estado:'Solicitada'};
- try{localStorage.setItem('reservas',JSON.stringify([...obtenerReservas(),nueva]));setReserva(nueva)}catch{setError('No se pudo guardar la reserva en este navegador. Comprueba que permita almacenamiento local.')}
+ try{setReserva(crearReserva(nueva))}catch(e){setError(e.message||'No se pudo guardar la reserva.')}
  }
  return <>
 <header>

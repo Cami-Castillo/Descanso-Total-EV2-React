@@ -1,26 +1,39 @@
-# Descanso Total — React + Vite
+# Descanso Total — Evaluación Parcial 2 (React)
 
-Proyecto frontend académico para la Evaluación Parcial 2 de Fullstack II.
+Proyecto académico de Hotel Descanso Total, migrado a React + Vite + Bootstrap.
 
-## Iniciar
+## Abrir y ejecutar (Windows / VS Code)
+Abre **esta carpeta (la que contiene `package.json`)** y en PowerShell ejecuta:
 
-```bash
+```powershell
 npm install
 npm run dev
 ```
 
-Abrir la URL local que muestra Vite (normalmente http://localhost:5173).
+Abre la dirección Local que muestre Vite, normalmente `http://localhost:5173/`.
 
-## Cambios de esta entrega
+## Pruebas unitarias Jasmine + Karma
 
-- El menú **Mi reserva** usa el JavaScript oficial de Bootstrap.
-- **Seleccionar habitación** abre la ruta React de reserva con fechas, habitación y huéspedes.
-- Catálogo ajustado al caso: HAB001–HAB005, capacidades, precios y estados iniciales.
-- Las reservas solicitadas se guardan en `localStorage` y pueden consultarse por código.
-- La búsqueda de disponibilidad contempla reservas ya guardadas y no muestra como disponibles habitaciones ocupadas o en limpieza.
+```powershell
+npm test
+```
 
-## Alcance
+Necesitas Google Chrome instalado. Las 10 pruebas verifican catálogo, fechas, solapamiento, validación, crear, consultar, modificar y cancelar reservas. Se ejecutan en Chrome Headless. El archivo `.karma-bundle.js` se genera al lanzar Karma.
 
-Es una demostración de frontend: `localStorage` solo persiste datos en **este navegador**, no entre dispositivos ni de forma segura. No hay backend, autenticación ni reserva real. El caso de estudio pide privacidad por huésped, por lo que se requeriría autenticación/backend para producción.
+## Rutas principales
+- `/rf01-disponibilidad`: disponibilidad (lógica heredada)
+- `/rf02-registrar-reserva`: registro con React/useState
+- `/rf03-estado-de-reserva`: consulta y edición con React/useState
+- `/rf05-cancelar-reserva`: cancelación con React/useState
+- Otras rutas RF04 y RF06–RF10: pantallas originales migradas y todavía con parte del JS heredado.
 
-La rúbrica solicita además 10 pruebas con Jasmine/Karma, ERS y cobertura de testing, que se deben completar/verificar antes de entregar la evaluación.
+## Persistencia
+`src/data/reservas.js`: operaciones crear, leer, actualizar y cancelar (baja lógica); localStorage con clave `reservas`. Prototipo de frontend: los datos se guardan **solo en ese navegador**, no es una reserva real ni hay autenticación, servidor o base de datos compartida.
+
+## Alcance real y pendientes
+- El catálogo refleja las 5 habitaciones y 4 servicios indicados en el caso.
+- Las reservas en estados `Check-in` / `Check-out` no pueden cancelarse desde el flujo nuevo.
+- Las operaciones principales de reservas tienen validación y 10 pruebas propuestas; hay que ejecutar `npm test` y registrar evidencia real.
+- El resto de módulos RF04, RF06–RF10 mantienen lógica JavaScript heredada: verificar y migrar antes de declarar cumplimiento completo.
+- Se necesita actualizar el ERS V2, agregar capturas de resultados de pruebas, cobertura e informar de la presentación.
+- No declarar reservas sincronizadas con otros equipos: usa almacenamiento local.
