@@ -39,15 +39,12 @@ export default function Page6() {
                   type="text"
                   id="codigoReserva"
                   className="form-control"
-                  placeholder="Ej: DT-1234"
+                  placeholder="Ej: DT-123456"
                 />
               </div>
 
               <div className="col-md-4">
-                <button
-                  type="submit"
-                  className="btn btn-primary w-100"
-                >
+                <button type="submit" className="btn btn-primary w-100">
                   <i className="bi bi-search"></i>{" "}
                   Buscar reserva
                 </button>
@@ -103,12 +100,13 @@ export default function Page6() {
                         <select
                           className="form-select qty-select"
                           data-servicio="Desayuno"
-                          data-price="25000"
+                          data-price="12000"
                         >
                           <option value="0">0</option>
                           <option value="1">1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
+                          <option value="4">4</option>
                         </select>
                       </td>
                       <td className="subtotal">$0</td>
@@ -120,11 +118,13 @@ export default function Page6() {
                         <select
                           className="form-select qty-select"
                           data-servicio="Spa"
-                          data-price="15000"
+                          data-price="25000"
                         >
                           <option value="0">0</option>
                           <option value="1">1</option>
                           <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
                         </select>
                       </td>
                       <td className="subtotal">$0</td>
@@ -136,12 +136,13 @@ export default function Page6() {
                         <select
                           className="form-select qty-select"
                           data-servicio="Cena"
-                          data-price="35000"
+                          data-price="20000"
                         >
                           <option value="0">0</option>
                           <option value="1">1</option>
                           <option value="2">2</option>
                           <option value="3">3</option>
+                          <option value="4">4</option>
                         </select>
                       </td>
                       <td className="subtotal">$0</td>
@@ -153,11 +154,13 @@ export default function Page6() {
                         <select
                           className="form-select qty-select"
                           data-servicio="Estacionamiento"
-                          data-price="15000"
+                          data-price="10000"
                         >
                           <option value="0">0</option>
                           <option value="1">1</option>
                           <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
                         </select>
                       </td>
                       <td className="subtotal">$0</td>

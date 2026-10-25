@@ -76,7 +76,11 @@ export default function App() {
       e.preventDefault();
 
       if (url.pathname !== window.location.pathname) {
-        window.history.pushState({}, "", url.pathname);
+        window.history.pushState(
+              {},
+              "",
+              url.pathname + url.search
+            );
         setPath(url.pathname);
         window.scrollTo(0, 0);
       }

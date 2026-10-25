@@ -32,24 +32,24 @@ export default function Page10() {
               <div className="card-body">
                 <h2 className="h5 card-title">Habitación</h2>
 
-                <form className="row g-3">
-                  <div className="col-12">
-                    <label htmlFor="habitacion" className="form-label">
-                      Habitación
-                    </label>
+                <label htmlFor="habitacion" className="form-label">
+                  Seleccionar habitación
+                </label>
 
-                    <input
-                      type="number"
-                      id="habitacion"
-                      name="habitacion"
-                      className="form-control"
-                      min="1"
-                      placeholder="N° de habitación"
-                    />
-                  </div>
-                </form>
+                <select
+                  id="habitacion"
+                  className="form-select"
+                  defaultValue=""
+                >
+                  <option value="">Selecciona una habitación</option>
+                  <option value="HAB001">HAB001 - Habitación Simple</option>
+                  <option value="HAB002">HAB002 - Habitación Doble</option>
+                  <option value="HAB003">HAB003 - Habitación Superior</option>
+                  <option value="HAB004">HAB004 - Suite Ejecutiva</option>
+                  <option value="HAB005">HAB005 - Suite Presidencial</option>
+                </select>
 
-                <p id="resultado" className="mt-2 mb-0"></p>
+                <p id="resultado" className="mt-3 mb-0"></p>
               </div>
             </div>
           </div>
@@ -59,43 +59,30 @@ export default function Page10() {
               <div className="card-body">
                 <h2 className="h5 card-title">Asignar persona</h2>
 
-                <form className="row g-3">
-                  <div className="col-md-8">
-                    <label htmlFor="persona" className="form-label">
-                      Persona asignada
-                    </label>
+                <label htmlFor="persona" className="form-label">
+                  Persona asignada
+                </label>
 
-                    <select
-                      id="persona"
-                      name="persona"
-                      className="form-select"
-                      defaultValue=""
-                    >
-                      <option value=""></option>
-                      <option value="Benjamín Romero">
-                        Benjamín Romero
-                      </option>
-                      <option value="Camila Castillo">
-                        Camila Castillo
-                      </option>
-                      <option value="Rubén Espejo">
-                        Rubén Espejo
-                      </option>
-                    </select>
-                  </div>
+                <select
+                  id="persona"
+                  className="form-select"
+                  defaultValue=""
+                >
+                  <option value="">Selecciona una persona</option>
+                  <option value="Benjamín Romero">Benjamín Romero</option>
+                  <option value="Camila Castillo">Camila Castillo</option>
+                  <option value="Rubén Espejo">Rubén Espejo</option>
+                </select>
 
-                  <div className="col-md-4 d-flex align-items-end">
-                    <button
-                      type="button"
-                      id="btnAsignar"
-                      className="btn btn-primary"
-                    >
-                      Asignar
-                    </button>
-                  </div>
-                </form>
+                <button
+                  type="button"
+                  id="btnAsignar"
+                  className="btn btn-primary mt-3"
+                >
+                  Asignar
+                </button>
 
-                <p id="resultado2" className="mt-2 mb-0"></p>
+                <p id="resultado2" className="mt-3 mb-0"></p>
               </div>
             </div>
           </div>
@@ -103,22 +90,22 @@ export default function Page10() {
           <div className="col-12 col-md-4">
             <div className="card shadow-sm h-100">
               <div className="card-body">
-                <h2 className="h5 card-title">Estado habitación</h2>
+                <h2 className="h5 card-title">Estado de limpieza</h2>
 
                 <p id="estado" className="fw-semibold">
-                  Pendiente
+                  Selecciona una habitación
                 </p>
 
                 <button
                   type="button"
                   id="btnCompletar"
                   className="btn btn-primary"
-                  disabled={true}
+                  disabled
                 >
                   Marcar como completado
                 </button>
 
-                <p id="resultado3" className="mt-2 mb-0"></p>
+                <p id="resultado3" className="mt-3 mb-0"></p>
               </div>
             </div>
           </div>
