@@ -1,4 +1,5 @@
 import React,{useEffect,useState} from 'react';
+import Navbar from "./components/Navbar";
 import Page0 from "./pages/Page0";
 import Page1 from "./pages/Page1";
 import Page2 from "./pages/Page2";
@@ -45,5 +46,10 @@ export default function App(){
   return()=>{window.removeEventListener('popstate',pop);document.removeEventListener('click',navigate)};
  },[]);
  const Page=routes[path] || routes['/'];
- return <Page key={path}/>;
+ return (
+  <>
+    <Navbar />
+    <Page key={path} />
+  </>
+);
 }

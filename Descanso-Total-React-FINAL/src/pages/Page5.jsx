@@ -1,6 +1,168 @@
-import React,{useState} from 'react';
-import Navbar from '../components/Navbar';import EstadoReserva from '../components/EstadoReserva';import {buscarReserva,actualizarReserva,HABITACIONES} from '../data/reservas';
-export default function Page5(){const[codigo,setCodigo]=useState('');const[reserva,setReserva]=useState(null);const[error,setError]=useState('');const[editar,setEditar]=useState(false);const[form,setForm]=useState({});
-function consultar(e){e.preventDefault();const r=buscarReserva(codigo);setReserva(r);setEditar(false);setForm(r||{});setError(r?'':'No se encontró la reserva. Revisa el código.');}
-function guardar(e){e.preventDefault();try{const nueva=actualizarReserva(reserva.codigo,{entrada:form.entrada,salida:form.salida,huespedes:Number(form.huespedes),habitacion:form.habitacion});setReserva(nueva);setEditar(false);setError('')}catch(e){setError(e.message)}}
-return <><Navbar/><main className="container py-4"><h1>Consultar mi reserva</h1><p>Ingresa el código que recibiste al solicitar tu reserva.</p><form onSubmit={consultar} className="row g-2"><div className="col-md-8"><label className="form-label" htmlFor="codigo">Código de reserva</label><input className="form-control" id="codigo" value={codigo} onChange={e=>setCodigo(e.target.value)} placeholder="DT-123456"/></div><div className="col-md-4 d-flex align-items-end"><button className="btn btn-primary w-100">Consultar</button></div></form>{error&&<p role="alert" className="alert alert-danger mt-3">{error}</p>}<EstadoReserva reserva={reserva}/>{reserva&&!['Cancelada','Check-in','Check-out'].includes(reserva.estado)&&<><button className="btn btn-outline-primary mt-3" onClick={()=>setEditar(v=>!v)}>{editar?'Cerrar edición':'Modificar reserva'}</button>{editar&&<form onSubmit={guardar} className="row g-3 mt-2"><div className="col-md-6"><label className="form-label">Entrada<input className="form-control" type="date" value={form.entrada||''} onChange={e=>setForm({...form,entrada:e.target.value})}/></label></div><div className="col-md-6"><label className="form-label">Salida<input className="form-control" type="date" value={form.salida||''} onChange={e=>setForm({...form,salida:e.target.value})}/></label></div><div className="col-md-6"><label className="form-label">Huéspedes<input className="form-control" type="number" min="1" value={form.huespedes||1} onChange={e=>setForm({...form,huespedes:e.target.value})}/></label></div><div className="col-md-6"><label className="form-label">Habitación<select className="form-select" value={form.habitacion||''} onChange={e=>setForm({...form,habitacion:e.target.value})}>{HABITACIONES.filter(h=>h.estado==='Disponible').map(h=><option key={h.codigo} value={h.nombre}>{h.nombre}</option>)}</select></label></div><div><button className="btn btn-success">Guardar cambios</button></div></form>}</>}</main></>}
+import React, { useState } from "react";
+import EstadoReserva from "../components/EstadoReserva";
+import {
+  buscarReserva,
+  actualizarReserva,
+  HABITACIONES
+} from "../data/reservas";
+
+export default function Page5() {
+  const [codigo, setCodigo] = useState("");
+  const [reserva, setReserva] = useState(null);
+  const [error, setError] = useState("");
+  const [editar, setEditar] = useState(false);
+  const [form, setForm] = useState({});
+
+  function consultar(e) {
+    e.preventDefault();
+
+    const r = buscarReserva(codigo);
+
+    setReserva(r);
+    setEditar(false);
+    setForm(r || {});
+    setError(r ? "" : "No se encontró la reserva. Revisa el código.");
+  }
+
+  function guardar(e) {
+    e.preventDefault();
+
+    try {
+      const nueva = actualizarReserva(reserva.codigo, {
+        entrada: form.entrada,
+        salida: form.salida,
+        huespedes: Number(form.huespedes),
+        habitacion: form.habitacion
+      });
+
+      setReserva(nueva);
+      setEditar(false);
+      setError("");
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  return (
+    <main className="container py-4">
+      <h1>Consultar mi reserva</h1>
+      <p>Ingresa el código que recibiste al solicitar tu reserva.</p>
+
+      <form onSubmit={consultar} className="row g-2">
+        <div className="col-md-8">
+          <label className="form-label" htmlFor="codigo">
+            Código de reserva
+          </label>
+
+          <input
+            className="form-control"
+            id="codigo"
+            value={codigo}
+            onChange={(e) => setCodigo(e.target.value)}
+            placeholder="DT-123456"
+          />
+        </div>
+
+        <div className="col-md-4 d-flex align-items-end">
+          <button className="btn btn-primary w-100">
+            Consultar
+          </button>
+        </div>
+      </form>
+
+      {error && (
+        <p role="alert" className="alert alert-danger mt-3">
+          {error}
+        </p>
+      )}
+
+      <EstadoReserva reserva={reserva} />
+
+      {reserva &&
+        !["Cancelada", "Check-in", "Check-out"].includes(reserva.estado) && (
+          <>
+            <button
+              className="btn btn-outline-primary mt-3"
+              onClick={() => setEditar(!editar)}
+            >
+              {editar ? "Cerrar edición" : "Modificar reserva"}
+            </button>
+
+            {editar && (
+              <form onSubmit={guardar} className="row g-3 mt-2">
+                <div className="col-md-6">
+                  <label className="form-label">
+                    Entrada
+                    <input
+                      className="form-control"
+                      type="date"
+                      value={form.entrada || ""}
+                      onChange={(e) =>
+                        setForm({ ...form, entrada: e.target.value })
+                      }
+                    />
+                  </label>
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">
+                    Salida
+                    <input
+                      className="form-control"
+                      type="date"
+                      value={form.salida || ""}
+                      onChange={(e) =>
+                        setForm({ ...form, salida: e.target.value })
+                      }
+                    />
+                  </label>
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">
+                    Huéspedes
+                    <input
+                      className="form-control"
+                      type="number"
+                      min="1"
+                      value={form.huespedes || 1}
+                      onChange={(e) =>
+                        setForm({ ...form, huespedes: e.target.value })
+                      }
+                    />
+                  </label>
+                </div>
+
+                <div className="col-md-6">
+                  <label className="form-label">
+                    Habitación
+                    <select
+                      className="form-select"
+                      value={form.habitacion || ""}
+                      onChange={(e) =>
+                        setForm({ ...form, habitacion: e.target.value })
+                      }
+                    >
+                      {HABITACIONES.filter(
+                        (h) => h.estado === "Disponible"
+                      ).map((h) => (
+                        <option key={h.codigo} value={h.nombre}>
+                          {h.nombre}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
+                <div>
+                  <button className="btn btn-success">
+                    Guardar cambios
+                  </button>
+                </div>
+              </form>
+            )}
+          </>
+        )}
+    </main>
+  );
+}
