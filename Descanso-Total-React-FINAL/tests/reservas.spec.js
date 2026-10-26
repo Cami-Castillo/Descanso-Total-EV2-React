@@ -137,4 +137,28 @@ describe("Descanso Total: 10 pruebas de reservas", function () {
     expect(disponibleDespues).toBeTrue();
   });
 
+  
+  it('comprueba el almacenamiento utilizando un spy', () => {
+    const spy = spyOn(Storage.prototype, 'setItem').and.callThrough();
+
+    localStorage.setItem('prueba', 'Descanso Total');
+
+    expect(spy).toHaveBeenCalledWith('prueba', 'Descanso Total');
+    expect(localStorage.getItem('prueba')).toBe('Descanso Total');
+  });
+
+    it('simula el almacenamiento mediante un mock', () => {
+    const guardar = spyOn(Storage.prototype, 'setItem').and.stub();
+
+    localStorage.setItem('reservaPrueba', 'DT-123456');
+
+    expect(guardar).toHaveBeenCalledWith(
+      'reservaPrueba',
+      'DT-123456'
+    );
+
+    expect(localStorage.getItem('reservaPrueba')).toBeNull();
+  });
+
+
 });
