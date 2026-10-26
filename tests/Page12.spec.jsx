@@ -103,4 +103,37 @@ describe("Page12 - Reportes", () => {
     expect(contenedor.textContent).toContain("DT-102");
     expect(contenedor.textContent).toContain("$100.000");
   });
+  
+  it("rechaza un período con fechas incorrectas", async () => {
+    const desde = contenedor.querySelector("#desde");
+    const hasta = contenedor.querySelector("#hasta");
+
+    const cambiarFecha = (input, valor) => {
+      const setter = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        "value"
+      ).set;
+
+      setter.call(input, valor);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    };
+
+    await act(async () => {
+      cambiarFecha(desde, "2026-11-20");
+      cambiarFecha(hasta, "2026-11-10");
+    });
+
+    await act(async () => {
+      contenedor.querySelector("button.btn-primary").click();
+    });
+
+    expect(contenedor.textContent).toContain(
+      "La fecha final no puede ser anterior a la inicial."
+    );
+
+    expect(contenedor.textContent).not.toContain(
+      "Detalle de reservas"
+    );
+  });
+
 });

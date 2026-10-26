@@ -88,4 +88,52 @@ describe("Page8 - Gestión de reservas", () => {
       "Reserva DT-001 confirmada correctamente."
     );
   });
+    it("impide confirmar reservas con fechas superpuestas", async () => {
+    const reservas = [
+        {
+        codigo: "DT-001",
+        nombre: "Ana",
+        apellido: "Pérez",
+        habitacion: "Habitación Simple",
+        entrada: "2026-11-10",
+        salida: "2026-11-12",
+        estado: "Solicitada"
+        },
+        {
+        codigo: "DT-002",
+        nombre: "Pedro",
+        apellido: "Soto",
+        habitacion: "Habitación Simple",
+        entrada: "2026-11-11",
+        salida: "2026-11-13",
+        estado: "Confirmada"
+        }
+    ];
+
+    localStorage.setItem("reservas", JSON.stringify(reservas));
+
+    await act(async () => {
+        root.unmount();
+    });
+
+    root = createRoot(contenedor);
+
+    await act(async () => {
+        root.render(<Page8 />);
+    });
+
+    const boton = contenedor.querySelector("button.btn-success");
+
+    await act(async () => {
+        boton.click();
+    });
+
+    const guardadas = JSON.parse(localStorage.getItem("reservas"));
+    const solicitada = guardadas.find((r) => r.codigo === "DT-001");
+
+    expect(solicitada.estado).toBe("Solicitada");
+    expect(contenedor.textContent).toContain(
+        "No se puede confirmar la reserva porque la habitación ya está asignada"
+    );
+    });
 });

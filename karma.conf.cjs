@@ -52,12 +52,33 @@ module.exports = async function(config) {
     plugins: [coberturaPlugin]
   });
 
+    
   config.set({
     frameworks: ['jasmine'],
-    files: [destino],
+
+    files: [
+      destino,
+      {
+        pattern: 'public/styles/**/*.css',
+        included: false,
+        served: true,
+        watched: false,
+        nocache: false
+      }
+    ],
+
+    proxies: {
+      '/styles/':
+        '/absolute' +
+        path.resolve(__dirname, 'public/styles').replace(/\\/g, '/') +
+        '/'
+    },
+
     browsers: ['ChromeHeadless'],
     singleRun: true,
+
     reporters: ['progress', 'coverage'],
+
     coverageReporter: {
       dir: 'coverage',
       reporters: [
@@ -65,9 +86,12 @@ module.exports = async function(config) {
         { type: 'text-summary' }
       ]
     },
+
     client: {
       captureConsole: true
     },
+
     browserNoActivityTimeout: 60000
   });
+
 };
