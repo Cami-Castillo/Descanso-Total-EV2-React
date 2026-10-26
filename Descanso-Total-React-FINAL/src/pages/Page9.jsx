@@ -1,109 +1,247 @@
 
-import React, { useEffect } from "react";
-import initialize from "../legacy/Page9";
+import React, { useEffect, useState } from "react";
 
-export default function Page9() {
+const HABITACIONES = {
+  HAB001: "Habitación Simple",
+  HAB002: "Habitación Doble",
+  HAB003: "Habitación Superior",
+  HAB004: "Suite Ejecutiva",
+  HAB005: "Suite Presidencial"
+};
+
+const PERSONAS = [
+  "Benjamín Romero",
+  "Camila Castillo",
+  "Rubén Espejo"
+];
+
+export default function Page10() {
+  const [habitacion, setHabitacion] = useState("");
+  const [persona, setPersona] = useState("");
+  const [limpiezas, setLimpiezas] = useState(() => {
+    return JSON.parse(localStorage.getItem("limpiezaHabitaciones")) || {};
+  });
+
+  const [mensajeHabitacion, setMensajeHabitacion] = useState("");
+  const [mensajeAsignacion, setMensajeAsignacion] = useState("");
+  const [mensajeCompletar, setMensajeCompletar] = useState("");
+  const [errorAsignacion, setErrorAsignacion] = useState(false);
+  const [errorCompletar, setErrorCompletar] = useState(false);
+
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/styles/RF07-Check-in-estilos.css";
+    link.href = "/styles/RF08-Gestionar limpieza-estilos.css";
     link.setAttribute("data-page-style", "");
     document.head.appendChild(link);
 
-    initialize();
-
-    return () => {
-      link.remove();
-    };
+    return () => link.remove();
   }, []);
+
+  const limpiezaActual = limpiezas[habitacion];
+
+  const estado = !habitacion
+    ? "Selecciona una habitación"
+    : limpiezaActual?.estado || "Pendiente";
+
+  const puedeCompletar = limpiezaActual?.estado === "En limpieza";
+
+  function seleccionarHabitacion(codigo) {
+    setHabitacion(codigo);
+    setPersona(limpiezas[codigo]?.persona || "");
+    setMensajeHabitacion(
+      codigo ? `${codigo} - ${HABITACIONES[codigo]}` : ""
+    );
+    setMensajeAsignacion("");
+    setMensajeCompletar("");
+  }
+
+  function asignarLimpieza() {
+    setMensajeCompletar("");
+
+    if (!habitacion || !persona) {
+      setMensajeAsignacion(
+        "Debes seleccionar una habitación y una persona."
+      );
+      setErrorAsignacion(true);
+      return;
+    }
+
+    const actualizadas = {
+      ...limpiezas,
+      [habitacion]: {
+        persona,
+        estado: "En limpieza"
+      }
+    };
+
+    localStorage.setItem(
+      "limpiezaHabitaciones",
+      JSON.stringify(actualizadas)
+    );
+
+    setLimpiezas(actualizadas);
+    setMensajeAsignacion(
+      `${persona} asignado/a correctamente a ${habitacion}.`
+    );
+    setErrorAsignacion(false);
+  }
+
+  function completarLimpieza() {
+    if (!habitacion || !limpiezaActual) {
+      setMensajeCompletar(
+        "Primero debes asignar la limpieza."
+      );
+      setErrorCompletar(true);
+      return;
+    }
+
+    if (limpiezaActual.estado !== "En limpieza") {
+      setMensajeCompletar(
+        "Esta habitación no tiene una limpieza pendiente."
+      );
+      setErrorCompletar(true);
+      return;
+    }
+
+    const actualizadas = {
+      ...limpiezas,
+      [habitacion]: {
+        ...limpiezaActual,
+        estado: "Completada"
+      }
+    };
+
+    localStorage.setItem(
+      "limpiezaHabitaciones",
+      JSON.stringify(actualizadas)
+    );
+
+    setLimpiezas(actualizadas);
+    setMensajeCompletar(
+      `Limpieza de ${habitacion} completada correctamente.`
+    );
+    setErrorCompletar(false);
+  }
 
   return (
     <>
       <main className="container py-4">
-        <h1>Check-in</h1>
+        <h1>Limpieza</h1>
 
         <p className="text-center">
-          Validar reserva y habitación lista; registrar registro
+          Asignar limpieza y actualizar el estado de la habitación
         </p>
 
         <div className="row justify-content-center g-4">
-          <div className="col-12 col-md-6">
+          <div className="col-12 col-md-4">
             <div className="card shadow-sm h-100">
               <div className="card-body">
-                <h2 className="h5 card-title">Validar reserva</h2>
+                <h2 className="h5 card-title">Habitación</h2>
 
-                <form className="row g-3">
-                  <div className="col-md-8">
-                    <label htmlFor="codigo" className="form-label">
-                      Validar código
-                    </label>
+                <label htmlFor="habitacion" className="form-label">
+                  Seleccionar habitación
+                </label>
 
-                    <input
-                      type="text"
-                      id="codigo"
-                      name="codigo"
-                      className="form-control"
-                      placeholder="Código de reserva"
-                    />
-                  </div>
+                <select
+                  id="habitacion"
+                  className="form-select"
+                  value={habitacion}
+                  onChange={(e) =>
+                    seleccionarHabitacion(e.target.value)
+                  }
+                >
+                  <option value="">Selecciona una habitación</option>
 
-                  <div className="col-md-4 d-flex align-items-end">
-                    <button
-                      type="button"
-                      id="btnValidar"
-                      className="btn btn-primary w-100"
-                    >
-                      OK
-                    </button>
-                  </div>
-                </form>
+                  {Object.entries(HABITACIONES).map(([codigo, nombre]) => (
+                    <option key={codigo} value={codigo}>
+                      {codigo} - {nombre}
+                    </option>
+                  ))}
+                </select>
 
-                <p id="resultado" className="mt-2 mb-0"></p>
+                {mensajeHabitacion && (
+                  <p className="mt-3 mb-0 text-success">
+                    {mensajeHabitacion}
+                  </p>
+                )}
               </div>
             </div>
           </div>
 
-          <div className="col-12 col-md-6">
+          <div className="col-12 col-md-4">
             <div className="card shadow-sm h-100">
               <div className="card-body">
-                <h2 className="h5 card-title">Registrar check-in</h2>
+                <h2 className="h5 card-title">Asignar persona</h2>
 
-                <form className="row g-3">
-                  <div className="col-md-8">
-                    <label htmlFor="registro" className="form-label">
-                      Código de reserva
-                    </label>
+                <label htmlFor="persona" className="form-label">
+                  Persona asignada
+                </label>
 
-                    <input
-                      type="text"
-                      id="registro"
-                      name="registro"
-                      className="form-control"
-                      placeholder="Código de reserva"
-                    />
-                  </div>
+                <select
+                  id="persona"
+                  className="form-select"
+                  value={persona}
+                  onChange={(e) => setPersona(e.target.value)}
+                >
+                  <option value="">Selecciona una persona</option>
 
-                  <div className="col-md-4 d-flex align-items-end">
-                    <button
-                      type="button"
-                      id="btnRegistrar"
-                      className="btn btn-primary w-100"
-                    >
-                      OK
-                    </button>
-                  </div>
-                </form>
+                  {PERSONAS.map((nombre) => (
+                    <option key={nombre} value={nombre}>
+                      {nombre}
+                    </option>
+                  ))}
+                </select>
 
-                <p id="resultado2" className="mt-2 mb-0"></p>
+                <button
+                  type="button"
+                  className="btn btn-primary mt-3"
+                  onClick={asignarLimpieza}
+                >
+                  Asignar
+                </button>
+
+                {mensajeAsignacion && (
+                  <p className={
+                    "mt-3 mb-0 " +
+                    (errorAsignacion ? "text-danger" : "text-success")
+                  }>
+                    {mensajeAsignacion}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="col-12 col-md-4">
+            <div className="card shadow-sm h-100">
+              <div className="card-body">
+                <h2 className="h5 card-title">Estado de limpieza</h2>
+
+                <p className="fw-semibold">{estado}</p>
+
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={completarLimpieza}
+                  disabled={!puedeCompletar}
+                >
+                  Marcar como completado
+                </button>
+
+                {mensajeCompletar && (
+                  <p className={
+                    "mt-3 mb-0 " +
+                    (errorCompletar ? "text-danger" : "text-success")
+                  }>
+                    {mensajeCompletar}
+                  </p>
+                )}
               </div>
             </div>
           </div>
         </div>
       </main>
-
-      <footer className="text-center py-3">
-        <p>© 2026 Hotel Descanso Total · Viña del Mar, Chile</p>
-      </footer>
     </>
   );
 }
