@@ -1,247 +1,192 @@
 
 import React, { useEffect, useState } from "react";
+import { HABITACIONES } from "../data/reservas";
 
-const HABITACIONES = {
-  HAB001: "Habitación Simple",
-  HAB002: "Habitación Doble",
-  HAB003: "Habitación Superior",
-  HAB004: "Suite Ejecutiva",
-  HAB005: "Suite Presidencial"
-};
+function obtenerHoy() {
+  const fecha = new Date();
+  const anio = fecha.getFullYear();
+  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
+  const dia = String(fecha.getDate()).padStart(2, "0");
 
-const PERSONAS = [
-  "Benjamín Romero",
-  "Camila Castillo",
-  "Rubén Espejo"
-];
+  return `${anio}-${mes}-${dia}`;
+}
 
-export default function Page10() {
-  const [habitacion, setHabitacion] = useState("");
-  const [persona, setPersona] = useState("");
-  const [limpiezas, setLimpiezas] = useState(() => {
-    return JSON.parse(localStorage.getItem("limpiezaHabitaciones")) || {};
-  });
-
-  const [mensajeHabitacion, setMensajeHabitacion] = useState("");
-  const [mensajeAsignacion, setMensajeAsignacion] = useState("");
-  const [mensajeCompletar, setMensajeCompletar] = useState("");
-  const [errorAsignacion, setErrorAsignacion] = useState(false);
-  const [errorCompletar, setErrorCompletar] = useState(false);
+export default function Page9() {
+  const [codigo, setCodigo] = useState("");
+  const [reserva, setReserva] = useState(null);
+  const [mensaje, setMensaje] = useState("");
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/styles/RF08-Gestionar limpieza-estilos.css";
+    link.href = "/styles/RF07-Check-in-estilos.css";
     link.setAttribute("data-page-style", "");
     document.head.appendChild(link);
 
     return () => link.remove();
   }, []);
 
-  const limpiezaActual = limpiezas[habitacion];
+  function buscarReserva(event) {
+    event.preventDefault();
 
-  const estado = !habitacion
-    ? "Selecciona una habitación"
-    : limpiezaActual?.estado || "Pendiente";
-
-  const puedeCompletar = limpiezaActual?.estado === "En limpieza";
-
-  function seleccionarHabitacion(codigo) {
-    setHabitacion(codigo);
-    setPersona(limpiezas[codigo]?.persona || "");
-    setMensajeHabitacion(
-      codigo ? `${codigo} - ${HABITACIONES[codigo]}` : ""
+    const reservas = JSON.parse(
+      localStorage.getItem("reservas") || "[]"
     );
-    setMensajeAsignacion("");
-    setMensajeCompletar("");
-  }
 
-  function asignarLimpieza() {
-    setMensajeCompletar("");
+    const encontrada = reservas.find(
+      (r) => r.codigo.toUpperCase() === codigo.trim().toUpperCase()
+    );
 
-    if (!habitacion || !persona) {
-      setMensajeAsignacion(
-        "Debes seleccionar una habitación y una persona."
-      );
-      setErrorAsignacion(true);
+    setReserva(null);
+
+    if (!encontrada) {
+      setMensaje("No se encontró la reserva.");
+      setError(true);
       return;
     }
 
-    const actualizadas = {
-      ...limpiezas,
-      [habitacion]: {
-        persona,
-        estado: "En limpieza"
-      }
-    };
+    setReserva(encontrada);
+    setMensaje("Reserva encontrada.");
+    setError(false);
+  }
+
+  function registrarCheckin() {
+    if (!reserva) return;
+
+    if (reserva.estado !== "Confirmada") {
+      setMensaje("La reserva debe estar confirmada.");
+      setError(true);
+      return;
+    }
+
+    const hoy = obtenerHoy();
+
+    if (hoy < reserva.entrada || hoy >= reserva.salida) {
+      setMensaje("El check-in solo puede realizarse durante la estadía.");
+      setError(true);
+      return;
+    }
+
+    const habitacion = HABITACIONES.find(
+      (h) => h.nombre === reserva.habitacion
+    );
+
+    if (!habitacion) {
+      setMensaje("No se encontró la habitación.");
+      setError(true);
+      return;
+    }
+
+    const limpiezas = JSON.parse(
+      localStorage.getItem("limpiezaHabitaciones") || "{}"
+    );
+
+    const limpieza = limpiezas[habitacion.codigo];
+
+    if (
+      limpieza?.estado === "Pendiente" ||
+      limpieza?.estado === "En limpieza" ||
+      (!limpieza && habitacion.estado !== "Disponible")
+    ) {
+      setMensaje("La habitación todavía no está lista.");
+      setError(true);
+      return;
+    }
+
+    const reservas = JSON.parse(
+      localStorage.getItem("reservas") || "[]"
+    );
+
+    const actual = reservas.find(
+      (r) => r.codigo === reserva.codigo
+    );
+
+    if (!actual || actual.estado !== "Confirmada") {
+      setMensaje("La reserva ya no está disponible para check-in.");
+      setError(true);
+      return;
+    }
+
+    const actualizadas = reservas.map((r) =>
+      r.codigo === reserva.codigo
+        ? { ...r, estado: "Check-in" }
+        : r
+    );
 
     localStorage.setItem(
-      "limpiezaHabitaciones",
+      "reservas",
       JSON.stringify(actualizadas)
     );
 
-    setLimpiezas(actualizadas);
-    setMensajeAsignacion(
-      `${persona} asignado/a correctamente a ${habitacion}.`
-    );
-    setErrorAsignacion(false);
-  }
-
-  function completarLimpieza() {
-    if (!habitacion || !limpiezaActual) {
-      setMensajeCompletar(
-        "Primero debes asignar la limpieza."
-      );
-      setErrorCompletar(true);
-      return;
-    }
-
-    if (limpiezaActual.estado !== "En limpieza") {
-      setMensajeCompletar(
-        "Esta habitación no tiene una limpieza pendiente."
-      );
-      setErrorCompletar(true);
-      return;
-    }
-
-    const actualizadas = {
-      ...limpiezas,
-      [habitacion]: {
-        ...limpiezaActual,
-        estado: "Completada"
-      }
-    };
-
-    localStorage.setItem(
-      "limpiezaHabitaciones",
-      JSON.stringify(actualizadas)
-    );
-
-    setLimpiezas(actualizadas);
-    setMensajeCompletar(
-      `Limpieza de ${habitacion} completada correctamente.`
-    );
-    setErrorCompletar(false);
+    setReserva({ ...actual, estado: "Check-in" });
+    setMensaje("Check-in registrado correctamente.");
+    setError(false);
   }
 
   return (
-    <>
-      <main className="container py-4">
-        <h1>Limpieza</h1>
+    <main className="container py-4">
+      <h1>Check-in</h1>
+      <p className="text-center">
+        Validar la reserva y registrar el ingreso del huésped.
+      </p>
 
-        <p className="text-center">
-          Asignar limpieza y actualizar el estado de la habitación
-        </p>
+      <div className="card shadow-sm mx-auto" style={{ maxWidth: 650 }}>
+        <div className="card-body">
+          <h2 className="h5">Buscar reserva</h2>
 
-        <div className="row justify-content-center g-4">
-          <div className="col-12 col-md-4">
-            <div className="card shadow-sm h-100">
-              <div className="card-body">
-                <h2 className="h5 card-title">Habitación</h2>
-
-                <label htmlFor="habitacion" className="form-label">
-                  Seleccionar habitación
-                </label>
-
-                <select
-                  id="habitacion"
-                  className="form-select"
-                  value={habitacion}
-                  onChange={(e) =>
-                    seleccionarHabitacion(e.target.value)
-                  }
-                >
-                  <option value="">Selecciona una habitación</option>
-
-                  {Object.entries(HABITACIONES).map(([codigo, nombre]) => (
-                    <option key={codigo} value={codigo}>
-                      {codigo} - {nombre}
-                    </option>
-                  ))}
-                </select>
-
-                {mensajeHabitacion && (
-                  <p className="mt-3 mb-0 text-success">
-                    {mensajeHabitacion}
-                  </p>
-                )}
-              </div>
+          <form onSubmit={buscarReserva} className="row g-3">
+            <div className="col-md-8">
+              <label htmlFor="codigoCheckin" className="form-label">
+                Código de reserva
+              </label>
+              <input
+                id="codigoCheckin"
+                className="form-control"
+                value={codigo}
+                onChange={(e) => setCodigo(e.target.value)}
+                placeholder="Ej: DT-713120"
+              />
             </div>
-          </div>
 
-          <div className="col-12 col-md-4">
-            <div className="card shadow-sm h-100">
-              <div className="card-body">
-                <h2 className="h5 card-title">Asignar persona</h2>
-
-                <label htmlFor="persona" className="form-label">
-                  Persona asignada
-                </label>
-
-                <select
-                  id="persona"
-                  className="form-select"
-                  value={persona}
-                  onChange={(e) => setPersona(e.target.value)}
-                >
-                  <option value="">Selecciona una persona</option>
-
-                  {PERSONAS.map((nombre) => (
-                    <option key={nombre} value={nombre}>
-                      {nombre}
-                    </option>
-                  ))}
-                </select>
-
-                <button
-                  type="button"
-                  className="btn btn-primary mt-3"
-                  onClick={asignarLimpieza}
-                >
-                  Asignar
-                </button>
-
-                {mensajeAsignacion && (
-                  <p className={
-                    "mt-3 mb-0 " +
-                    (errorAsignacion ? "text-danger" : "text-success")
-                  }>
-                    {mensajeAsignacion}
-                  </p>
-                )}
-              </div>
+            <div className="col-md-4 d-flex align-items-end">
+              <button type="submit" className="btn btn-primary w-100">
+                Buscar
+              </button>
             </div>
-          </div>
+          </form>
 
-          <div className="col-12 col-md-4">
-            <div className="card shadow-sm h-100">
-              <div className="card-body">
-                <h2 className="h5 card-title">Estado de limpieza</h2>
+          {mensaje && (
+            <p className={error ? "mt-3 text-danger" : "mt-3 text-success"}>
+              {mensaje}
+            </p>
+          )}
 
-                <p className="fw-semibold">{estado}</p>
+          {reserva && (
+            <div className="mt-4">
+              <h2 className="h5">Detalle de la reserva</h2>
 
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={completarLimpieza}
-                  disabled={!puedeCompletar}
-                >
-                  Marcar como completado
-                </button>
+              <p><strong>Código:</strong> {reserva.codigo}</p>
+              <p>
+                <strong>Huésped:</strong> {reserva.nombre} {reserva.apellido}
+              </p>
+              <p><strong>Habitación:</strong> {reserva.habitacion}</p>
+              <p><strong>Entrada:</strong> {reserva.entrada}</p>
+              <p><strong>Salida:</strong> {reserva.salida}</p>
+              <p><strong>Estado:</strong> {reserva.estado}</p>
 
-                {mensajeCompletar && (
-                  <p className={
-                    "mt-3 mb-0 " +
-                    (errorCompletar ? "text-danger" : "text-success")
-                  }>
-                    {mensajeCompletar}
-                  </p>
-                )}
-              </div>
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={registrarCheckin}
+                disabled={reserva.estado !== "Confirmada"}
+              >
+                Registrar check-in
+              </button>
             </div>
-          </div>
+          )}
         </div>
-      </main>
-    </>
+      </div>
+    </main>
   );
 }
